@@ -1,0 +1,14 @@
+* {
+  box-sizing: content-box;
+}
+.login-form {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form input {
+  margin-block: 0.5rem;
+}
