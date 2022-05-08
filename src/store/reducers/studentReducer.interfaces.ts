@@ -1,4 +1,4 @@
 export interface studentState {
-  student: null | string;
+  student?: string;
   loggedIn: boolean;
 }

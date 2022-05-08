@@ -1,8 +1,8 @@
-import { Action } from "../actions";
+import { Action, actionTypes } from "../actions/actions.interface";
 import { studentState } from "./studentReducer.interfaces";
 
 const initialState = {
-  student: null,
+  student: undefined,
   loggedIn: false,
 };
 
@@ -11,14 +11,14 @@ export const studentReducer = (
   action: Action
 ): studentState => {
   switch (action.type) {
-    case "WRITE_STUDENT": {
-      return { ...state, student: action.payload as string };
+    case actionTypes.WRITE_STUDENT: {
+      return { ...state, student: action.student };
     }
-    case "LOGIN_STUDENT": {
+    case actionTypes.LOGIN_STUDENT: {
       return { ...state, loggedIn: true };
     }
-    case "LOGOUT_STUDENT": {
-      return { student: null, loggedIn: false };
+    case actionTypes.LOGOUT_STUDENT: {
+      return { student: undefined, loggedIn: false };
     }
     default: {
       return state;

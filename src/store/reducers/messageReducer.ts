@@ -1,4 +1,4 @@
-import { Action } from "../actions";
+import { Action, actionTypes } from "../actions/actions.interface";
 import { messageState } from "./messageReducer.interfaces";
 
 const initialState = {
@@ -10,11 +10,11 @@ export const messageReducer = (
   action: Action
 ): messageState => {
   switch (action.type) {
-    case "SET_MESSAGE": {
-      return { message: action.payload as string };
+    case actionTypes.SET_MESSAGE: {
+      return { ...state, message: action.message };
     }
-    case "DELETE_MESSAGE": {
-      return { message: "" };
+    case actionTypes.DELETE_MESSAGE: {
+      return { ...state, message: "" };
     }
     default: {
       return state;

@@ -1,19 +1,24 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginStudent, setMessage, writeStudent } from "../../store/actions";
-import { masterState } from "../../store/reducers/index.interfaces";
-import { studentState } from "../../store/reducers/studentReducer.interfaces";
 import {
-  classTypeFetched,
-  studentIdMap,
-  studentInfo,
-} from "./studentForm.interfaces";
+  deleteMessage,
+  loginStudent,
+  setMessage,
+  writeClasses,
+  writeStudent,
+} from "../../store/actions";
+import {
+  masterState,
+  messageType,
+  studentType,
+} from "../../store/reducers/reducers.interfaces";
+import { studentInfo } from "./studentForm.interfaces";
 import "./StudentForm.css";
-import { messageState } from "../../store/reducers/messageReducer.interfaces";
 import { classType } from "../../store/reducers/classesReducer.interfaces";
+import Airtable from "airtable";
 
 export const StudentForm: React.FC = () => {
-  const Airtable = require("airtable");
+  // const Airtable = require("airtable");
   // const base = new Airtable({ apiKey: "keyNwRHpi1JA9FA42" }).base(
   //   "app8ZbcPx7dkpOnP0"
   // );
@@ -23,10 +28,10 @@ export const StudentForm: React.FC = () => {
   const studentsTable = base("Students");
   const classesTable = base("Classes");
 
-  const student = useSelector<masterState, studentState["student"]>(
+  const student = useSelector<masterState, studentType>(
     ({ studentState }) => studentState.student
   );
-  const message = useSelector<masterState, messageState["message"]>(
+  const message = useSelector<masterState, messageType>(
     ({ messageState }) => messageState.message
   );
 
@@ -38,10 +43,11 @@ export const StudentForm: React.FC = () => {
 
   const login = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    dispatch(deleteMessage());
     const studentInfo = await getStudent(student as string);
-    console.log("the estudent info is ", studentInfo);
     if (Object.keys(studentInfo).length !== 0) {
       const studentClasses = await getClasses(studentInfo);
+      dispatch(writeClasses(studentClasses));
       dispatch(loginStudent());
       return;
     }
@@ -49,13 +55,13 @@ export const StudentForm: React.FC = () => {
   };
 
   const getStudent = async (student: string): Promise<studentInfo> => {
-    const records = await studentsTable
+    const studentRecords = await studentsTable
       .select({
         filterByFormula: `{Name} = '${student}'`,
       })
       .firstPage();
-    if (records.length > 0) {
-      return records[0]._rawJson.fields;
+    if (studentRecords.length > 0) {
+      return studentRecords[0]._rawJson.fields;
     }
     return {};
   };
@@ -67,16 +73,31 @@ export const StudentForm: React.FC = () => {
     }
     const filterByFormula = generateIdsFilterFormula(studentInfo.Classes);
 
-    const records = await classesTable
+    const classesRecords = await classesTable
       .select({
         filterByFormula: filterByFormula,
       })
       .firstPage();
-    const classesInfo = records.map((record: any) => record._rawJson.fields);
+    const classesInfo = classesRecords.map(
+      (record: any) => record._rawJson.fields
+    );
     const studentsIds = extractStudentsId(classesInfo);
     const studentsIdMap = await getStudents(studentsIds);
+    const classes = mergeClassesAndStudents(classesInfo, studentsIdMap);
+    return classes;
+  };
 
-    return [];
+  const mergeClassesAndStudents = (
+    classesInfo: classType[],
+    studentsIdMap: any
+  ): classType[] => {
+    const classes: classType[] = [];
+    classesInfo.forEach((cls) => {
+      const tmpCls = JSON.parse(JSON.stringify(cls));
+      tmpCls.Students = tmpCls.Students.map((id: string) => studentsIdMap[id]);
+      classes.push(tmpCls);
+    });
+    return classes;
   };
 
   const getStudents = async (studentsIds: string[]) => {
@@ -90,11 +111,10 @@ export const StudentForm: React.FC = () => {
     records.forEach((record: any) => {
       studentsIdMap[record._rawJson.id] = record._rawJson.fields.Name;
     });
-    console.log("all students", studentsIdMap);
-    return [];
+    return studentsIdMap;
   };
 
-  const extractStudentsId = (classesInfo: classTypeFetched[]) => {
+  const extractStudentsId = (classesInfo: classType[]) => {
     let studentsIds: string[] = [];
     classesInfo.forEach((cls) => {
       studentsIds = [...studentsIds, ...cls.Students];
@@ -117,7 +137,7 @@ export const StudentForm: React.FC = () => {
     <div>
       <form className="login-form" onSubmit={login}>
         <label htmlFor="student">Student:</label>
-        <input type="text" onChange={updateStudent} />
+        <input type="text" onChange={updateStudent} required />
         <button type="submit">Log In</button>
         {message.length > 0 && <p className="message">{message}</p>}
       </form>

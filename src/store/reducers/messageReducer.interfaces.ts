@@ -1,3 +1,3 @@
 export interface messageState {
-  message: string;
+  message?: string;
 }

@@ -7,3 +7,7 @@ export interface masterState {
   classesState: classesState;
   messageState: messageState;
 }
+
+export type loggedInType = masterState["studentState"]["loggedIn"];
+export type messageType = masterState["messageState"]["message"];
+export type studentType = masterState["studentState"]["student"];

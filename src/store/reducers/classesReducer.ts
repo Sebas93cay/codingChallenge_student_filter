@@ -1,5 +1,5 @@
-import { Action } from "../actions";
-import { classesState, classType } from "./classesReducer.interfaces";
+import { Action, actionTypes } from "../actions/actions.interface";
+import { classesState } from "./classesReducer.interfaces";
 
 const initialState = {
   classes: [],
@@ -10,10 +10,10 @@ export const classesReducer = (
   action: Action
 ): classesState => {
   switch (action.type) {
-    case "WRITE_CLASSES": {
-      return { classes: action.payload as classType[] };
+    case actionTypes.WRITE_CLASSES: {
+      return { classes: action.classes };
     }
-    case "DELETE_CLASSES": {
+    case actionTypes.DELETE_CLASSES: {
       return { classes: [] };
     }
     default: {

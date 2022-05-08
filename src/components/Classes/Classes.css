@@ -1,0 +1,23 @@
+.classes-container {
+  padding-block: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.class-container {
+  border-radius: 10px;
+  box-shadow: 2px 2px 15px #0005;
+  border-radius: 1px solid #000a;
+  width: 300px;
+  margin-block: 10px;
+  padding-inline: 10px;
+}
+
+.p-title {
+  font-weight: bold;
+}
+
+.p-content {
+  margin-inline-start: 10px;
+}

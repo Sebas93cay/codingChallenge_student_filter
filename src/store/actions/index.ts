@@ -1,38 +1,27 @@
 import { classType } from "../reducers/classesReducer.interfaces";
-
-export type Action = {
-  type:
-    | "WRITE_STUDENT"
-    | "WRITE_CLASSES"
-    | "LOGOUT_STUDENT"
-    | "DELETE_CLASSES"
-    | "LOGIN_STUDENT"
-    | "SET_MESSAGE"
-    | "DELETE_MESSAGE";
-  payload?: string | classType[];
-};
+import { Action, actionTypes } from "./actions.interface";
 
 export const writeStudent = (student: string): Action => ({
-  type: "WRITE_STUDENT",
-  payload: student,
+  type: actionTypes.WRITE_STUDENT,
+  student,
 });
 export const loginStudent = (): Action => ({
-  type: "LOGIN_STUDENT",
+  type: actionTypes.LOGIN_STUDENT,
 });
 export const logoutStudent = (): Action => ({
-  type: "LOGOUT_STUDENT",
+  type: actionTypes.LOGOUT_STUDENT,
 });
 export const writeClasses = (classes: classType[]): Action => ({
-  type: "WRITE_CLASSES",
-  payload: classes,
+  type: actionTypes.WRITE_CLASSES,
+  classes,
 });
 export const deleteClasses = (): Action => ({
-  type: "DELETE_CLASSES",
+  type: actionTypes.DELETE_CLASSES,
 });
 export const setMessage = (message: string): Action => ({
-  type: "SET_MESSAGE",
-  payload: message,
+  type: actionTypes.SET_MESSAGE,
+  message,
 });
 export const deleteMessage = (): Action => ({
-  type: "DELETE_MESSAGE",
+  type: actionTypes.DELETE_MESSAGE,
 });
